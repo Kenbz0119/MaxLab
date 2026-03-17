@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MaxLab – Regenerative Wellness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue: #1a65e0;
+  --blue-light: #3d86f5;
+  --blue-pale: rgba(26,101,224,0.08);
+  --teal: #00bfa5;
+  --teal-light: #26d9bd;
+  --teal-pale: rgba(0,191,165,0.10);
+  --dark: #0b1d35;
+  --navy: #132040;
+  --navy-mid: #162847;
+  --text: #1a2438;
+  --muted: #56657a;
+  --white: #ffffff;
+  --off-white: #f4f8fd;
+  --border: rgba(26,37,53,0.09);
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --radius: 16px;
+  --shadow: 0 8px 40px rgba(11,29,53,0.10);
+  --shadow-lg: 0 20px 60px rgba(11,29,53,0.16);
+  --grad: linear-gradient(135deg, var(--blue), var(--teal));
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--white);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+
+em { font-style: italic; color: var(--teal); }
+
+/* ─── FADE-IN ──────────────────────────────────────────────── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* ─── NAV ─────────────────────────────────────────────────── */
+#navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  transition: background 0.35s, box-shadow 0.35s;
+  padding: 0 2rem;
+}
+#navbar.scrolled {
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 2px 24px rgba(11,29,53,0.09);
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 110px; gap: 2rem;
+}
+.nav-logo img { height: 96px; width: auto; display: block; }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  font-family: var(--font-body); font-size: 0.88rem; font-weight: 500;
+  color: rgba(255,255,255,0.88); text-decoration: none; letter-spacing: 0.03em;
+  transition: color 0.2s;
+}
+#navbar.scrolled .nav-links a { color: var(--navy); }
+.nav-links a:hover { color: var(--teal-light); }
+#navbar.scrolled .nav-links a:hover { color: var(--blue); }
+.nav-cta {
+  background: var(--grad); color: #fff; padding: 0.6rem 1.4rem;
+  border-radius: 100px; font-size: 0.85rem; font-weight: 600;
+  text-decoration: none; transition: all 0.25s;
+  white-space: nowrap; box-shadow: 0 3px 14px rgba(0,191,165,0.30);
+}
+.nav-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(0,191,165,0.4); }
+.hamburger { display: none; background: none; border: none; cursor: pointer; flex-direction: column; gap: 5px; }
+.hamburger span { width: 24px; height: 2px; background: var(--white); display: block; transition: background 0.2s; border-radius: 2px; }
+#navbar.scrolled .hamburger span { background: var(--navy); }
+
+/* ─── HERO ────────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(145deg, var(--dark) 0%, #0d2a52 45%, #0a3d4a 100%);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  padding: 6rem 2rem 4rem;
+}
+/* Layered glow orbs */
+.hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 55% at 75% 25%, rgba(26,101,224,0.22) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 50% at 20% 75%, rgba(0,191,165,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 35% 40% at 55% 60%, rgba(0,140,120,0.10) 0%, transparent 55%);
+  pointer-events: none;
+}
+/* Subtle noise texture overlay */
+.hero::after {
+  content: "";
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none; opacity: 0.5;
+}
+
+/* Floating molecule rings */
+.mol { position: absolute; border-radius: 50%; pointer-events: none; }
+.mol-1 {
+  width: 320px; height: 320px; top: 8%; right: 6%;
+  border: 1px solid rgba(0,191,165,0.14);
+  animation: floatring 12s ease-in-out infinite;
+}
+.mol-1::after {
+  content: ""; position: absolute; inset: 25%;
+  border-radius: 50%; border: 1px solid rgba(26,101,224,0.20);
+}
+.mol-2 {
+  width: 200px; height: 200px; bottom: 18%; left: 4%;
+  border: 1px solid rgba(0,191,165,0.10);
+  animation: floatring 16s ease-in-out infinite reverse;
+}
+.mol-3 {
+  width: 90px; height: 90px; top: 58%; right: 14%;
+  border: 1.5px solid rgba(26,101,224,0.22);
+  animation: floatring 9s ease-in-out infinite;
+}
+/* Glow dot cluster */
+.mol-dots { position: absolute; top: 15%; right: 10%; pointer-events: none; }
+.mol-dots span {
+  position: absolute; border-radius: 50%;
+  background: var(--teal); opacity: 0.4;
+  animation: pulse 4s ease-in-out infinite;
+}
+.mol-dots span:nth-child(1) { width: 6px; height: 6px; top: 0; left: 0; animation-delay: 0s; }
+.mol-dots span:nth-child(2) { width: 4px; height: 4px; top: 30px; left: 50px; animation-delay: 0.8s; }
+.mol-dots span:nth-child(3) { width: 8px; height: 8px; top: 60px; left: 15px; animation-delay: 1.5s; }
+.mol-dots span:nth-child(4) { width: 5px; height: 5px; top: 90px; left: 65px; animation-delay: 2.2s; }
+.mol-line {
+  position: absolute; pointer-events: none;
+  width: 1px; background: linear-gradient(to bottom, rgba(0,191,165,0.3), transparent);
+}
+.mol-line-1 { height: 120px; top: 5%; right: 22%; animation: linefade 7s ease-in-out infinite; }
+.mol-line-2 { height: 80px; bottom: 25%; left: 12%; animation: linefade 9s ease-in-out infinite 2s; }
+
+@keyframes floatring {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-20px) scale(1.03); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.4); }
+}
+@keyframes linefade {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.6; }
+}
+
+.hero-content {
+  position: relative; z-index: 2;
+  text-align: center; max-width: 800px;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.2em;
+  color: var(--teal); text-transform: uppercase;
+  margin-bottom: 1.8rem;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ""; width: 28px; height: 1px; background: var(--teal); opacity: 0.6;
+}
+.hero-title {
+  font-family: var(--font-display); font-size: clamp(3rem, 8.5vw, 6.5rem);
+  font-weight: 300; line-height: 1.08; color: var(--white);
+  margin-bottom: 1.6rem; letter-spacing: -0.02em;
+}
+.hero-title em { color: var(--teal-light); font-style: italic; }
+.hero-sub {
+  font-size: 1.05rem; color: rgba(255,255,255,0.62); max-width: 520px;
+  margin: 0 auto 2.8rem; line-height: 1.85;
+}
+.hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--grad); color: #fff; padding: 0.9rem 2.4rem;
+  border-radius: 100px; font-weight: 600; font-size: 0.92rem;
+  text-decoration: none; transition: all 0.25s;
+  box-shadow: 0 4px 24px rgba(0,191,165,0.35); letter-spacing: 0.02em;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(0,191,165,0.45); }
+.btn-ghost {
+  border: 1.5px solid rgba(255,255,255,0.28); color: rgba(255,255,255,0.85);
+  padding: 0.9rem 2.4rem; border-radius: 100px; font-weight: 400;
+  font-size: 0.92rem; text-decoration: none; transition: all 0.25s;
+  backdrop-filter: blur(6px);
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.65); color: #fff; background: rgba(255,255,255,0.06); }
+.hero-scroll-hint {
+  position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  color: rgba(255,255,255,0.28); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+}
+.scroll-line {
+  width: 1px; height: 50px;
+  background: linear-gradient(to bottom, var(--teal), transparent);
+  animation: scrollpulse 2.2s ease-in-out infinite;
+}
+@keyframes scrollpulse { 0%,100%{opacity:0.2;} 50%{opacity:0.8;} }
+
+/* ─── MARQUEE ─────────────────────────────────────────────── */
+.marquee-strip {
+  background: linear-gradient(90deg, var(--dark), var(--navy-mid));
+  overflow: hidden; padding: 0.9rem 0;
+  white-space: nowrap; border-top: 1px solid rgba(0,191,165,0.12);
+}
+.marquee-track {
+  display: inline-block;
+  animation: marquee 24s linear infinite;
+  font-family: var(--font-body); font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.7);
+}
+.marquee-track .dot { color: var(--teal); margin: 0 1rem; opacity: 0.7; }
+@keyframes marquee { 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
+
+/* ─── ABOUT ───────────────────────────────────────────────── */
+.about-strip { background: var(--off-white); padding: 6.5rem 2rem; }
+.container { max-width: 1160px; margin: 0 auto; }
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+}
+.section-eyebrow {
+  font-size: 0.73rem; font-weight: 600; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--blue); margin-bottom: 1rem;
+}
+h2 {
+  font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 400; line-height: 1.15; color: var(--navy);
+  margin-bottom: 1.5rem;
+}
+.about-text p { color: var(--muted); margin-bottom: 1rem; font-size: 1rem; }
+.about-stats { display: flex; flex-direction: column; gap: 1.5rem; }
+.stat {
+  display: flex; align-items: baseline; gap: 1.1rem;
+  padding-bottom: 1.5rem; border-bottom: 1px solid var(--border);
+}
+.stat:last-child { border-bottom: none; }
+.stat-num {
+  font-family: var(--font-display); font-size: 3.2rem; font-weight: 300;
+  color: var(--navy); line-height: 1;
+}
+.stat-num em { color: var(--teal); font-size: 2.2rem; }
+.stat-label { font-size: 0.85rem; color: var(--muted); font-weight: 500; letter-spacing: 0.05em; }
+
+/* ─── SERVICES ────────────────────────────────────────────── */
+.services { padding: 7rem 2rem; background: var(--white); }
+.section-header { text-align: center; margin-bottom: 4rem; }
+.section-header h2 { margin: 0; }
+.section-header .intro-text {
+  color: var(--muted); font-size: 1.02rem; max-width: 540px;
+  margin: 1rem auto 0; line-height: 1.8;
+}
+.services-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
+}
+.service-card {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 2.5rem 2rem; position: relative; background: var(--white);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.service-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+.service-card.featured {
+  background: linear-gradient(145deg, var(--dark), var(--navy-mid));
+  border-color: transparent; color: #fff;
+}
+.service-card.featured h3 { color: #fff; }
+.service-card.featured p,
+.service-card.featured .benefit-list li,
+.service-card.featured .card-tag { color: rgba(255,255,255,0.72); }
+.service-card.featured em { color: var(--teal-light); }
+.service-card.featured .card-link { color: var(--teal-light); }
+.service-card.featured .card-link:hover { color: #fff; }
+.card-badge {
+  position: absolute; top: 1.2rem; right: 1.2rem;
+  background: var(--grad); color: #fff; font-size: 0.68rem;
+  font-weight: 700; letter-spacing: 0.08em; padding: 0.28rem 0.75rem;
+  border-radius: 100px; text-transform: uppercase;
+}
+.card-icon { width: 60px; height: 60px; margin-bottom: 1.5rem; }
+.card-tag {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem;
+}
+.service-card h3 {
+  font-family: var(--font-display); font-size: 1.75rem; font-weight: 500;
+  color: var(--navy); margin-bottom: 1rem; line-height: 1.2;
+}
+.service-card p { color: var(--muted); font-size: 0.91rem; margin-bottom: 1.5rem; line-height: 1.75; }
+.benefit-list { list-style: none; margin-bottom: 2rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.benefit-list li {
+  font-size: 0.86rem; color: var(--muted); padding-left: 1.2rem; position: relative;
+}
+.benefit-list li::before {
+  content: ""; position: absolute; left: 0; top: 50%;
+  transform: translateY(-50%); width: 6px; height: 6px; border-radius: 50%;
+  background: var(--teal);
+}
+.service-card.featured .benefit-list li::before { background: var(--teal-light); }
+.card-link {
+  font-size: 0.86rem; font-weight: 600; color: var(--blue);
+  text-decoration: none; letter-spacing: 0.04em; transition: color 0.2s;
+  display: inline-flex; align-items: center; gap: 0.35rem;
+}
+.card-link:hover { color: var(--teal); }
+
+/* ─── WAVE DIVIDER ─────────────────────────────────────────── */
+.wave-divider { background: var(--off-white); overflow: hidden; line-height: 0; }
+.wave-divider svg { display: block; width: 100%; height: 60px; }
+
+/* ─── TESTIMONIALS ─────────────────────────────────────────── */
+.testimonials { background: var(--off-white); padding: 7rem 2rem; }
+.testimonials-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
+  margin-top: 3.5rem;
+}
+.testi-card {
+  background: var(--white); border-radius: var(--radius);
+  padding: 2.2rem; border: 1px solid var(--border);
+  box-shadow: var(--shadow); transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+}
+.testi-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+.testi-quote-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--teal-pale); display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.4rem; color: var(--teal); flex-shrink: 0;
+}
+.testi-quote-icon svg { width: 18px; height: 18px; }
+.testi-stars {
+  display: flex; gap: 3px; margin-bottom: 1rem;
+}
+.testi-stars span {
+  width: 14px; height: 14px; color: #f4c430; font-size: 14px;
+}
+.testi-text {
+  font-family: var(--font-display); font-size: 1.08rem; font-weight: 400;
+  color: var(--text); line-height: 1.75; font-style: italic;
+  margin-bottom: 1.5rem;
+}
+.testi-author { display: flex; align-items: center; gap: 0.9rem; }
+.testi-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--grad); display: flex; align-items: center;
+  justify-content: center; font-weight: 700; color: #fff;
+  font-size: 0.9rem; flex-shrink: 0;
+}
+.testi-name { font-weight: 600; font-size: 0.9rem; color: var(--navy); }
+.testi-role { font-size: 0.78rem; color: var(--muted); }
+
+/* ─── APPOINTMENT ─────────────────────────────────────────── */
+.appointment { background: var(--white); padding: 7rem 2rem; }
+.appt-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 4rem; align-items: start; }
+.appt-info h2 { margin-bottom: 1rem; }
+.appt-info > p { color: var(--muted); margin-bottom: 2rem; }
+.contact-item {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1.2rem 1.5rem; background: var(--off-white);
+  border-radius: 12px; border: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+.contact-icon {
+  width: 44px; height: 44px; background: var(--teal-pale);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: var(--teal);
+}
+.contact-icon svg { width: 20px; height: 20px; }
+.contact-label { display: block; font-size: 0.73rem; color: var(--muted); margin-bottom: 0.15rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
+.contact-value { font-weight: 500; color: var(--navy); text-decoration: none; font-size: 0.9rem; word-break: break-word; }
+.contact-value:hover { color: var(--blue); }
+
+/* Wave deco for appointment */
+.wave-deco {
+  display: flex; gap: 4px; margin-top: 2rem; opacity: 0.5;
+}
+.wave-deco span {
+  display: block; width: 4px; border-radius: 4px;
+  background: var(--grad);
+  animation: wavedance 1.4s ease-in-out infinite;
+}
+.wave-deco span:nth-child(1) { height: 18px; animation-delay: 0s; }
+.wave-deco span:nth-child(2) { height: 30px; animation-delay: 0.15s; }
+.wave-deco span:nth-child(3) { height: 22px; animation-delay: 0.3s; }
+.wave-deco span:nth-child(4) { height: 36px; animation-delay: 0.45s; }
+.wave-deco span:nth-child(5) { height: 26px; animation-delay: 0.6s; }
+.wave-deco span:nth-child(6) { height: 18px; animation-delay: 0.75s; }
+@keyframes wavedance {
+  0%, 100% { transform: scaleY(0.6); opacity: 0.5; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+/* ─── FORM ─────────────────────────────────────────────────── */
+.appt-form-wrap {
+  background: var(--white); border-radius: var(--radius);
+  padding: 2.8rem; box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1.1rem; }
+.form-group label { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; color: var(--navy); text-transform: uppercase; }
+.form-group input,
+.form-group select,
+.form-group textarea {
+  border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 0.78rem 1rem; font-family: var(--font-body); font-size: 0.92rem;
+  color: var(--text); background: var(--white); outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s; width: 100%;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,191,165,0.10);
+}
+.form-group textarea { resize: vertical; min-height: 90px; }
+.btn-submit {
+  width: 100%; background: var(--grad);
+  color: #fff; border: none; border-radius: 100px;
+  padding: 1rem 2rem; font-family: var(--font-body); font-size: 0.95rem;
+  font-weight: 600; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; gap: 0.6rem;
+  transition: all 0.25s; box-shadow: 0 4px 20px rgba(0,191,165,0.32);
+  letter-spacing: 0.02em; margin-top: 0.5rem;
+}
+.btn-submit svg { width: 18px; height: 18px; }
+.btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,191,165,0.44); }
+.form-note { font-size: 0.76rem; color: var(--muted); text-align: center; margin-top: 1rem; line-height: 1.6; }
+
+/* ─── FOOTER ────────────────────────────────────────────────── */
+.footer { background: var(--dark); color: rgba(255,255,255,0.65); padding: 4.5rem 2rem 2rem; }
+.footer-inner {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1.4fr; gap: 3rem;
+  padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,0.07);
+  margin-bottom: 2rem;
+}
+.footer-logo { height: 72px; width: auto; margin-bottom: 1rem; }
+.footer-brand p { font-size: 0.87rem; line-height: 1.75; max-width: 270px; margin-bottom: 1.5rem; }
+.footer-social { display: flex; gap: 0.7rem; }
+.social-btn {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.55); text-decoration: none;
+  transition: all 0.22s;
+}
+.social-btn:hover { background: var(--teal); border-color: var(--teal); color: #fff; }
+.social-btn svg { width: 16px; height: 16px; }
+.footer-links h4, .footer-contact h4, .footer-hours h4 {
+  color: #fff; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; margin-bottom: 1.3rem;
+}
+.footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+.footer-links a { color: rgba(255,255,255,0.52); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+.footer-links a:hover { color: var(--teal); }
+.footer-contact { display: flex; flex-direction: column; gap: 0.6rem; }
+.footer-contact a { color: rgba(255,255,255,0.52); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; display: block; }
+.footer-contact a:hover { color: var(--teal); }
+.footer-cta {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: var(--grad); color: #fff !important; padding: 0.6rem 1.4rem;
+  border-radius: 100px; font-weight: 600; font-size: 0.82rem;
+  transition: all 0.22s; margin-top: 0.8rem;
+  box-shadow: 0 3px 14px rgba(0,191,165,0.25);
+}
+.footer-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,191,165,0.38) !important; }
+.footer-hours { }
+.footer-hours p { font-size: 0.86rem; color: rgba(255,255,255,0.52); margin-bottom: 0.4rem; }
+.footer-hours strong { color: rgba(255,255,255,0.82); }
+.footer-bottom {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+}
+.footer-bottom p { font-size: 0.8rem; color: rgba(255,255,255,0.3); }
+.footer-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: 0.75rem; color: rgba(255,255,255,0.3);
+}
+.footer-badge::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--teal); display: block; opacity: 0.7;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+/* ─── RESPONSIVE ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .about-grid, .appt-grid, .footer-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+  .services-grid, .testimonials-grid { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 680px) {
+  .nav-links, .nav-cta { display: none; }
+  .hamburger { display: flex; }
+  .nav-links.open {
+    display: flex; flex-direction: column; position: absolute;
+    top: 80px; left: 0; right: 0;
+    background: rgba(11,29,53,0.97); backdrop-filter: blur(20px);
+    padding: 1.5rem 2rem; gap: 1.2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  #navbar.scrolled .nav-links.open { background: rgba(255,255,255,0.97); }
+  .footer-inner { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <img src="logo.png" alt="MaxLab Regenerative Wellness" />
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="about.html">About</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="#testimonials">Stories</a></li>
+      <li><a href="#appointment">Contact</a></li>
+    </ul>
+    <a href="#appointment" class="nav-cta">Book Appointment</a>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <!-- Molecule ring decorations -->
+  <div class="mol mol-1"></div>
+  <div class="mol mol-2"></div>
+  <div class="mol mol-3"></div>
+  <div class="mol-dots">
+    <span></span><span></span><span></span><span></span>
+  </div>
+  <div class="mol-line mol-line-1"></div>
+  <div class="mol-line mol-line-2"></div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Science-Backed Recovery &amp; Healing</p>
+    <h1 class="hero-title">Maximize Your<br/>Wellness <em>Every Day</em></h1>
+    <p class="hero-sub">Holistic health, accelerated recovery, and personalized care — powered by advanced regenerative therapies designed for your unique biology.</p>
+    <div class="hero-actions">
+      <a href="#appointment" class="btn-primary">Book Appointment</a>
+      <a href="#services" class="btn-ghost">Learn More</a>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- MARQUEE STRIP -->
+<div class="marquee-strip">
+  <div class="marquee-track">
+    <span>Red Light Therapy</span><span class="dot">◆</span>
+    <span>HOCATT</span><span class="dot">◆</span>
+    <span>Hyperbaric Oxygen Therapy</span><span class="dot">◆</span>
+    <span>Regenerative Wellness</span><span class="dot">◆</span>
+    <span>Personalized Care</span><span class="dot">◆</span>
+    <span>Red Light Therapy</span><span class="dot">◆</span>
+    <span>HOCATT</span><span class="dot">◆</span>
+    <span>Hyperbaric Oxygen Therapy</span><span class="dot">◆</span>
+    <span>Regenerative Wellness</span><span class="dot">◆</span>
+    <span>Personalized Care</span><span class="dot">◆</span>
+  </div>
+</div>
+
+<!-- ABOUT STRIP -->
+<section class="about-strip" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text fade-up">
+        <p class="section-eyebrow">About MaxLab</p>
+        <h2>Where Science Meets <em>Restoration</em></h2>
+        <p>MaxLab Regenerative Wellness is a premium therapy center dedicated to harnessing cutting-edge bioscience to help your body heal, recover, and perform at its peak. Our protocols are grounded in clinical research and delivered with precision.</p>
+        <p>Every session is tailored to your unique physiology — because optimal wellness isn't one-size-fits-all. We combine the latest regenerative technologies with a deeply human approach to care.</p>
+      </div>
+      <div class="about-stats fade-up">
+        <div class="stat">
+          <span class="stat-num">500<em>+</em></span>
+          <span class="stat-label">Sessions Completed</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">3</span>
+          <span class="stat-label">Advanced Therapies</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">98<em>%</em></span>
+          <span class="stat-label">Client Satisfaction</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="container">
+    <div class="section-header fade-up">
+      <p class="section-eyebrow">Our Therapies</p>
+      <h2>Advanced Modalities for <em>Deep Healing</em></h2>
+      <p class="intro-text">Three science-backed therapies, each targeting a different dimension of your health — from cellular repair to full-body detoxification.</p>
+    </div>
+    <div class="services-grid">
+
+      <!-- Red Light -->
+      <div class="service-card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="30" r="10" fill="#00bfa5" opacity="0.85"/>
+            <circle cx="30" cy="30" r="16" fill="none" stroke="#00bfa5" stroke-width="1" opacity="0.3"/>
+            <line x1="30" y1="6" x2="30" y2="14" stroke="#1a65e0" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="30" y1="46" x2="30" y2="54" stroke="#1a65e0" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="6" y1="30" x2="14" y2="30" stroke="#1a65e0" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="46" y1="30" x2="54" y2="30" stroke="#1a65e0" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="13.1" y1="13.1" x2="18.8" y2="18.8" stroke="#00bfa5" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+            <line x1="41.2" y1="41.2" x2="46.9" y2="46.9" stroke="#00bfa5" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+            <line x1="46.9" y1="13.1" x2="41.2" y2="18.8" stroke="#00bfa5" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+            <line x1="18.8" y1="41.2" x2="13.1" y2="46.9" stroke="#00bfa5" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+          </svg>
+        </div>
+        <div class="card-tag">Therapy 01</div>
+        <h3>Red Light Therapy</h3>
+        <p>Harness specific wavelengths of red and near-infrared light to stimulate cellular repair, reduce inflammation, and accelerate tissue regeneration at the mitochondrial level.</p>
+        <ul class="benefit-list">
+          <li>Skin rejuvenation &amp; collagen synthesis</li>
+          <li>Muscle recovery &amp; pain relief</li>
+          <li>Improved sleep &amp; mood regulation</li>
+          <li>Enhanced circulation</li>
+        </ul>
+        <a href="#appointment" class="card-link">Book Session →</a>
+      </div>
+
+      <!-- HOCATT -->
+      <div class="service-card featured fade-up">
+        <div class="card-badge">Most Popular</div>
+        <div class="card-icon">
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="30" cy="32" rx="14" ry="20" stroke="#00bfa5" stroke-width="2" fill="rgba(0,191,165,0.08)"/>
+            <path d="M30 12 Q36 20 30 26 Q24 20 30 12Z" fill="#26d9bd" opacity="0.8"/>
+            <path d="M22 28 Q16 36 22 44" stroke="rgba(0,191,165,0.7)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            <path d="M38 28 Q44 36 38 44" stroke="rgba(0,191,165,0.7)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            <circle cx="30" cy="30" r="3.5" fill="#00bfa5" opacity="0.7"/>
+            <circle cx="30" cy="30" r="7" fill="none" stroke="rgba(0,191,165,0.25)" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="card-tag">Therapy 02</div>
+        <h3>HOCATT</h3>
+        <p>Hyperthermic Ozone &amp; Carbonic Acid Transdermal Technology — a multi-system chamber delivering ozone, carbonic acid, steam, and far-infrared simultaneously for unparalleled detoxification.</p>
+        <ul class="benefit-list">
+          <li>Deep cellular detoxification</li>
+          <li>Immune system activation</li>
+          <li>Anti-aging &amp; hormonal balance</li>
+          <li>Energy &amp; metabolic optimization</li>
+        </ul>
+        <a href="#appointment" class="card-link">Book Session →</a>
+      </div>
+
+      <!-- HBOT -->
+      <div class="service-card fade-up">
+        <div class="card-icon">
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="20" width="40" height="24" rx="12" stroke="#1a65e0" stroke-width="2" fill="rgba(26,101,224,0.07)"/>
+            <circle cx="30" cy="32" r="6" fill="#1a65e0" opacity="0.75"/>
+            <path d="M30 26 L30 14" stroke="#00bfa5" stroke-width="2" stroke-linecap="round"/>
+            <path d="M26 14 L34 14" stroke="#00bfa5" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="18" cy="32" r="2" fill="#3d86f5" opacity="0.5"/>
+            <circle cx="42" cy="32" r="2" fill="#3d86f5" opacity="0.5"/>
+            <circle cx="30" cy="32" r="10" fill="none" stroke="rgba(26,101,224,0.15)" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="card-tag">Therapy 03</div>
+        <h3>HBOT</h3>
+        <p>Hyperbaric Oxygen Therapy delivers 100% pure oxygen under increased atmospheric pressure, flooding tissues with oxygen to dramatically accelerate healing and neurological recovery.</p>
+        <ul class="benefit-list">
+          <li>Accelerated wound &amp; injury healing</li>
+          <li>Brain fog &amp; cognitive enhancement</li>
+          <li>Athletic performance recovery</li>
+          <li>Anti-inflammatory &amp; anti-aging</li>
+        </ul>
+        <a href="#appointment" class="card-link">Book Session →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WAVE DIVIDER -->
+<div class="wave-divider">
+  <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,30 C240,60 480,0 720,30 C960,60 1200,0 1440,30 L1440,60 L0,60 Z" fill="#f4f8fd"/>
+  </svg>
+</div>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="container">
+    <div class="section-header fade-up">
+      <p class="section-eyebrow">Client Stories</p>
+      <h2>Real Results, Real <em>People</em></h2>
+      <p class="intro-text">See how MaxLab's regenerative therapies have transformed the lives of our clients — from athletes to everyday wellness seekers.</p>
+    </div>
+    <div class="testimonials-grid">
+
+      <div class="testi-card fade-up">
+        <div class="testi-quote-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11.192 15.757c0-.88-.23-1.618-.69-2.217-.326-.412-.768-.683-1.327-.812-.55-.128-1.07-.137-1.54-.028-.16-.95.1-1.95.78-3 .53-.81 1.24-1.48 2.13-2.01L9.1 6.65c-1.22.63-2.17 1.52-2.85 2.68-.68 1.16-1.02 2.41-1.02 3.76 0 1.04.2 1.97.62 2.79.41.82.99 1.47 1.73 1.96.74.49 1.56.73 2.44.73.74 0 1.38-.16 1.93-.48.55-.32.97-.76 1.28-1.33.3-.57.46-1.18.46-1.83zm7.88 0c0-.88-.23-1.618-.69-2.217-.326-.42-.77-.695-1.327-.825-.56-.13-1.08-.138-1.54-.028-.16-.95.1-1.95.78-3 .53-.81 1.24-1.48 2.13-2.01l-1.446-1.04c-1.22.63-2.17 1.52-2.85 2.68-.68 1.16-1.02 2.41-1.02 3.76 0 1.04.2 1.97.62 2.79.41.82.99 1.47 1.73 1.96.74.49 1.56.73 2.44.73.74 0 1.38-.16 1.93-.48.55-.32.97-.76 1.28-1.33.3-.57.45-1.18.45-1.83z"/>
+          </svg>
+        </div>
+        <div class="testi-stars">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <p class="testi-text">"After just 6 sessions of Red Light Therapy, my chronic knee pain has reduced dramatically. I'm back to running — something I thought I'd lost forever. MaxLab gave me my life back."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">MA</div>
+          <div>
+            <div class="testi-name">Maria A.</div>
+            <div class="testi-role">Marathon Runner · Manila</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card fade-up">
+        <div class="testi-quote-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11.192 15.757c0-.88-.23-1.618-.69-2.217-.326-.412-.768-.683-1.327-.812-.55-.128-1.07-.137-1.54-.028-.16-.95.1-1.95.78-3 .53-.81 1.24-1.48 2.13-2.01L9.1 6.65c-1.22.63-2.17 1.52-2.85 2.68-.68 1.16-1.02 2.41-1.02 3.76 0 1.04.2 1.97.62 2.79.41.82.99 1.47 1.73 1.96.74.49 1.56.73 2.44.73.74 0 1.38-.16 1.93-.48.55-.32.97-.76 1.28-1.33.3-.57.46-1.18.46-1.83zm7.88 0c0-.88-.23-1.618-.69-2.217-.326-.42-.77-.695-1.327-.825-.56-.13-1.08-.138-1.54-.028-.16-.95.1-1.95.78-3 .53-.81 1.24-1.48 2.13-2.01l-1.446-1.04c-1.22.63-2.17 1.52-2.85 2.68-.68 1.16-1.02 2.41-1.02 3.76 0 1.04.2 1.97.62 2.79.41.82.99 1.47 1.73 1.96.74.49 1.56.73 2.44.73.74 0 1.38-.16 1.93-.48.55-.32.97-.76 1.28-1.33.3-.57.45-1.18.45-1.83z"/>
+          </svg>
+        </div>
+        <div class="testi-stars">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <p class="testi-text">"The HOCATT sessions are unlike anything I've experienced. My energy levels are through the roof, I sleep better, and my stress has dropped significantly. Truly transformative."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">JR</div>
+          <div>
+            <div class="testi-name">James R.</div>
+            <div class="testi-role">Business Executive · Cebu</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card fade-up">
+        <div class="testi-quote-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11.192 15.757c0-.88-.23-1.618-.69-2.217-.326-.412-.768-.683-1.327-.812-.55-.128-1.07-.137-1.54-.028-.16-.95.1-1.95.78-3 .53-.81 1.24-1.48 2.13-2.01L9.1 6.65c-1.22.63-2.17 1.52-2.85 2.68-.68 1.16-1.02 2.41-1.02 3.76 0 1.04.2 1.97.62 2.79.41.82.99 1.47 1.73 1.96.74.49 1.56.73 2.44.73.74 0 1.38-.16 1.93-.48.55-.32.97-.76 1.28-1.33.3-.57.46-1.18.46-1.83zm7.88 0c0-.88-.23-1.618-.69-2.217-.326-.42-.77-.695-1.327-.825-.56-.13-1.08-.138-1.54-.028-.16-.95.1-1.95.78-3 .53-.81 1.24-1.48 2.13-2.01l-1.446-1.04c-1.22.63-2.17 1.52-2.85 2.68-.68 1.16-1.02 2.41-1.02 3.76 0 1.04.2 1.97.62 2.79.41.82.99 1.47 1.73 1.96.74.49 1.56.73 2.44.73.74 0 1.38-.16 1.93-.48.55-.32.97-.76 1.28-1.33.3-.57.45-1.18.45-1.83z"/>
+          </svg>
+        </div>
+        <div class="testi-stars">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <p class="testi-text">"HBOT helped my recovery from a sports injury in half the expected time. The team at MaxLab is incredibly knowledgeable and caring. This is genuinely world-class treatment."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">LC</div>
+          <div>
+            <div class="testi-name">Lara C.</div>
+            <div class="testi-role">Professional Athlete · Davao</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- APPOINTMENT FORM -->
+<section class="appointment" id="appointment">
+  <div class="container">
+    <div class="appt-grid">
+      <div class="appt-info fade-up">
+        <p class="section-eyebrow">Book a Session</p>
+        <h2>Start Your Healing <em>Journey</em></h2>
+        <p>Fill out the form and our wellness team will reach out within 24 hours to confirm your appointment and answer any questions.</p>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="1.8"/>
+              <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+          </div>
+          <div>
+            <span class="contact-label">Email Us At</span>
+            <a href="mailto:appointments@maxlabwellness.com" class="contact-value">appointments@maxlabwellness.com</a>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+          </div>
+          <div>
+            <span class="contact-label">Call or WhatsApp</span>
+            <a href="tel:+639123456789" class="contact-value">+63 912 345 6789</a>
+          </div>
+        </div>
+        <div class="wave-deco">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="appt-form-wrap fade-up">
+        <form id="appointmentForm" action="mailto:appointments@maxlabwellness.com" method="POST" enctype="text/plain">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fname">First Name</label>
+              <input type="text" id="fname" name="First Name" placeholder="Juan" required />
+            </div>
+            <div class="form-group">
+              <label for="lname">Last Name</label>
+              <input type="text" id="lname" name="Last Name" placeholder="Dela Cruz" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="Email" placeholder="you@email.com" required />
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="Phone" placeholder="+63 912 345 6789" />
+          </div>
+          <div class="form-group">
+            <label for="service">Service of Interest</label>
+            <select id="service" name="Service" required>
+              <option value="" disabled selected>Select a therapy</option>
+              <option value="Red Light Therapy">Red Light Therapy</option>
+              <option value="HOCATT">HOCATT</option>
+              <option value="HBOT">HBOT – Hyperbaric Oxygen Therapy</option>
+              <option value="Consultation">General Consultation</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="date">Preferred Date</label>
+              <input type="date" id="date" name="Preferred Date" />
+            </div>
+            <div class="form-group">
+              <label for="time">Preferred Time</label>
+              <select id="time" name="Preferred Time">
+                <option value="" disabled selected>Select time</option>
+                <option>Morning (8AM – 12PM)</option>
+                <option>Afternoon (12PM – 5PM)</option>
+                <option>Evening (5PM – 8PM)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="message">Additional Notes</label>
+            <textarea id="message" name="Notes" rows="3" placeholder="Any health conditions, goals, or questions..."></textarea>
+          </div>
+          <button type="submit" class="btn-submit">
+            <span>Send Appointment Request</span>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <polyline points="12,5 19,12 12,19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <p class="form-note">Your request will be sent to <strong>appointments@maxlabwellness.com</strong>. We will confirm within 24 hours.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="logo.png" alt="MaxLab Regenerative Wellness" class="footer-logo">
+        <p>Advanced regenerative therapies for optimal human performance, recovery, and lasting vitality.</p>
+        <div class="footer-social">
+          <!-- Facebook -->
+          <a href="#" class="social-btn" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+          </a>
+          <!-- Instagram -->
+          <a href="#" class="social-btn" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+            </svg>
+          </a>
+          <!-- TikTok -->
+          <a href="#" class="social-btn" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.09a8.16 8.16 0 004.77 1.52V7.16a4.85 4.85 0 01-1-.47z"/></svg>
+          </a>
+          <!-- YouTube -->
+          <a href="#" class="social-btn" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58zM9.75 15.02V9l5.75 3-5.75 3.02z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">Red Light Therapy</a></li>
+          <li><a href="#services">HOCATT</a></li>
+          <li><a href="#services">HBOT</a></li>
+          <li><a href="#appointment">Book Session</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#about">About MaxLab</a></li>
+          <li><a href="#testimonials">Client Stories</a></li>
+          <li><a href="#appointment">Contact Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact">
+        <h4>Contact</h4>
+        <a href="mailto:appointments@maxlabwellness.com">appointments@maxlabwellness.com</a>
+        <a href="tel:+639123456789">+63 912 345 6789</a>
+        <a href="#appointment" class="footer-cta">
+          Book Appointment
+          <svg viewBox="0 0 16 16" fill="none" width="14" xmlns="http://www.w3.org/2000/svg">
+            <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="8,3 13,8 8,13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 MaxLab Regenerative Wellness. All rights reserved.</p>
+      <div class="footer-badge">Accepting new clients</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Smooth scroll
+  document.querySelectorAll("a[href^='#']").forEach(a => {
+    a.addEventListener("click", e => {
+      const href = a.getAttribute("href");
+      if (href === "#") return;
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) target.scrollIntoView({ behavior: "smooth" });
+      document.querySelector(".nav-links").classList.remove("open");
+    });
+  });
+
+  // Hamburger
+  document.getElementById("hamburger").addEventListener("click", () => {
+    document.querySelector(".nav-links").classList.toggle("open");
+  });
+
+  // Navbar scroll effect
+  window.addEventListener("scroll", () => {
+    document.getElementById("navbar").classList.toggle("scrolled", window.scrollY > 60);
+  });
+
+  // Fade-up on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add("visible");
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll(".fade-up").forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
